@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mapa escolar acessível com a localização e descrição dos ambientes.">
+    <title>Mapa Escolar Acessível</title>
+    <style>
+        :root {
+            --azul: #173f63;
+            --azul-claro: #e8f2fa;
+            --fundo: #f4f7fa;
+            --texto: #202b36;
+            --borda: #9aafc1;
+            --branco: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 17px;
+            line-height: 1.6;
+            color: var(--texto);
+            background: var(--fundo);
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: auto;
+        }
+
+        header {
+            padding: 32px 0;
+            color: white;
+            background: var(--azul);
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            line-height: 1.25;
+        }
+
+        header p {
+            margin-bottom: 0;
+        }
+
+        nav {
+            padding: 14px 0;
+            background: white;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        nav .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+        }
+
+        nav a {
+            color: var(--azul);
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        a:focus-visible {
+            outline: 3px solid #b35d00;
+            outline-offset: 4px;
+        }
+
+        .pular {
+            position: absolute;
+            top: -100px;
+            left: 10px;
+            padding: 10px;
+            background: white;
+            color: var(--azul);
+        }
+
+        .pular:focus {
+            top: 10px;
+        }
+
+        main {
+            padding-top: 28px;
+            padding-bottom: 40px;
+        }
+
+        h2 {
+            color: var(--azul);
+            line-height: 1.3;
+        }
+
+        .introducao {
+            margin-bottom: 28px;
+        }
+
+        .aviso {
+            padding: 14px 18px;
+            background: var(--azul-claro);
+            border-left: 5px solid var(--azul);
+            border-radius: 5px;
+        }
+
+        .mapa {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            padding: 20px;
+            background: #e5ece6;
+            border: 3px solid #617b6c;
+            border-radius: 12px;
+        }
+
+        .ambiente {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 145px;
+            padding: 14px 8px;
+            color: var(--azul);
+            background: white;
+            border: 2px solid var(--azul);
+            border-radius: 9px;
+            text-align: center;
+            text-decoration: none;
+            transition: transform 0.15s ease;
+        }
+
+        .ambiente:hover {
+            transform: translateY(-3px);
+            background: var(--azul-claro);
+        }
+
+        .simbolo {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 2rem;
+            line-height: 1.3;
+        }
+
+        .ambiente strong {
+            font-size: 1rem;
+        }
+
+        .legenda {
+            margin: 12px 0 32px;
+            font-size: 0.95rem;
+        }
+
+        .descricoes {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .descricao {
+            padding: 18px;
+            background: white;
+            border: 1px solid var(--borda);
+            border-radius: 9px;
+        }
+
+        .descricao h3 {
+            margin-top: 0;
+            color: var(--azul);
+        }
+
+        .descricao p {
+            margin-bottom: 0;
+        }
+
+        footer {
+            padding: 22px 0;
+            color: white;
+            background: var(--azul);
+            text-align: center;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        @media (max-width: 700px) {
+            .mapa {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+                padding: 12px;
+            }
+
+            .ambiente {
+                min-height: 125px;
+                padding: 10px 5px;
+            }
+
+            .descricoes {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .mapa {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            .ambiente {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header id="inicio">
+        <div class="container">
+            <h1>🏫 Mapa Escolar Acessível</h1>
+            <p>Encontre os ambientes da escola de maneira simples e organizada.</p>
+        </div>
+    </header>
+
+    <nav aria-label="Menu principal">
+        <div class="container">
+            <a href="#inicio">Início</a>
+            <a href="#mapa">Mapa da escola</a>
+            <a href="#ambientes">Descrição dos ambientes</a>
+        </div>
+    </nav>
+
+    <main id="conteudo" class="container">
+        <section class="introducao">
+            <h2>Bem-vindo à nossa escola!</h2>
+            <p>
+                Consulte o mapa abaixo para conhecer os principais espaços
+                da escola. Selecione um ambiente para acessar sua descrição.
+            </p>
+            <p class="aviso">
+                <strong>Importante:</strong> este é um mapa ilustrativo.
+                A posição dos ambientes é fictícia e não representa a planta
+                real de uma escola.
+            </p>
+        </section>
+
+        <section id="mapa">
+            <h2>📍 Mapa dos ambientes</h2>
+
+            <div class="mapa" aria-label="Mapa simplificado com oito ambientes">
+                <a class="ambiente" href="#entrada">
+                    <span class="simbolo" aria-hidden="true">🚪</span>
+                    <strong>Entrada</strong>
+                </a>
+
+                <a class="ambiente" href="#secretaria">
+                    <span class="simbolo" aria-hidden="true">🏢</span>
+                    <strong>Secretaria</strong>
+                </a>
+
+                <a class="ambiente" href="#sala">
+                    <span class="simbolo" aria-hidden="true">📚</span>
+                    <strong>Sala de aula</strong>
+                </a>
+
+                <a class="ambiente" href="#biblioteca">
+                    <span class="simbolo" aria-hidden="true">📖</span>
+                    <strong>Biblioteca</strong>
+                </a>
+
+                <a class="ambiente" href="#banheiro">
+                    <span class="simbolo" aria-hidden="true">🚻</span>
+                    <strong>Banheiro</strong>
+                </a>
+
+                <a class="ambiente" href="#refeitorio">
+                    <span class="simbolo" aria-hidden="true">🍽️</span>
+                    <strong>Refeitório</strong>
+                </a>
+
+                <a class="ambiente" href="#patio">
+                    <span class="simbolo" aria-hidden="true">🌳</span>
+                    <strong>Pátio</strong>
+                </a>
+
+                <a class="ambiente" href="#professores">
+                    <span class="simbolo" aria-hidden="true">👩‍🏫</span>
+                    <strong>Sala dos professores</strong>
+                </a>
+            </div>
+
+            <p class="legenda">
+                <strong>Como usar:</strong> clique ou toque no nome de um
+                ambiente para consultar sua descrição. Todos os espaços
+                possuem símbolos e identificação por texto.
+            </p>
+        </section>
+
+        <section id="ambientes">
+            <h2>ℹ️ Conheça cada ambiente</h2>
+
+            <div class="descricoes">
+                <article class="descricao" id="entrada">
+                    <h3>🚪 Entrada</h3>
+                    <p>
+                        É o principal acesso à escola. Por esse local,
+                        estudantes, funcionários e visitantes entram e saem.
+                    </p>
+                </article>
+
+                <article class="descricao" id="secretaria">
+                    <h3>🏢 Secretaria</h3>
+                    <p>
+                        Local de atendimento para matrículas, documentos,
+                        informações escolares e solicitações administrativas.
+                    </p>
+                </article>
+
+                <article class="descricao" id="sala">
+                    <h3>📚 Sala de aula</h3>
+                    <p>
+                        Espaço destinado às aulas, atividades pedagógicas,
+                        trabalhos em grupo e aprendizagem dos estudantes.
+                    </p>
+                </article>
+
+                <article class="descricao" id="biblioteca">
+                    <h3>📖 Biblioteca</h3>
+                    <p>
+                        Ambiente de leitura e pesquisa, com livros e outros
+                        materiais que ajudam nos estudos.
+                    </p>
+                </article>
+
+                <article class="descricao" id="banheiro">
+                    <h3>🚻 Banheiro</h3>
+                    <p>
+                        Espaço destinado à higiene pessoal. Utilize as
+                        instalações indicadas pela sinalização local.
+                    </p>
+                </article>
+
+                <article class="descricao" id="refeitorio">
+                    <h3>🍽️ Refeitório</h3>
+                    <p>
+                        Local onde os estudantes fazem suas refeições e
+                        convivem durante os intervalos.
+                    </p>
+                </article>
+
+                <article class="descricao" id="patio">
+                    <h3>🌳 Pátio</h3>
+                    <p>
+                        Área de convivência destinada a recreação,
+                        atividades coletivas e momentos de descanso.
+                    </p>
+                </article>
+
+                <article class="descricao" id="professores">
+                    <h3>👩‍🏫 Sala dos professores</h3>
+                    <p>
+                        Espaço de preparação de aulas, planejamento
+                        pedagógico e reuniões dos professores.
+                    </p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Mapa Escolar Acessível | Projeto educativo</p>
+        </div>
+    </footer>
+
+</body>
+</html>
+
